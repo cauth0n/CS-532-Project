@@ -1,51 +1,107 @@
 package stTree;
 
-import java.util.LinkedList;
-import java.util.List;
+/**
+ * http://www.cs.cmu.edu/~avrim/451/lectures/lect1009-linkcut.txt
+ * 
+ * @author derek.reimanis
+ * 
+ */
 
 public class Graph {
 
-	private List<Path> paths;
-
 	public Graph() {
-		paths = new LinkedList<Path>();
+
 	}
 
-	public void makeTree(Vertex v) {
-		makePath(v);
-		v.setSuccessor(null);
+	public void rotateRight(Vertex p) {
+		Vertex q = p.getParent();
+		Vertex r = q.getParent();
+		p.normalize();
+		q.normalize();
+		q.setLeft(p.getRight());
+		if (q.getLeft() != null) {
+			q.getLeft().setParent(p);
+		}
+		p.setRight(q);
+		q.setParent(p);
+		p.setParent(r);
+		if (p.getParent() != null) {
+			if (r.getLeft() == q) {
+				r.setLeft(p);
+			} else if (r.getRight() == q) {
+				r.setRight(p);
+			}
+		}
+		q.update();
+	}
+
+	public void rotateLeft(Vertex p) {
+		Vertex q = p.getParent();
+		Vertex r = q.getParent();
+		p.normalize();
+		q.normalize();
+		q.setRight(p.getLeft());
+		if (q.getRight() != null) {
+			q.getRight().setParent(p);
+		}
+		p.setLeft(q);
+		q.setParent(p);
+		p.setParent(r);
+		if (p.getParent() != null) {
+			if (r.getLeft() == q) {
+				r.setLeft(p);
+			} else if (r.getRight() == q) {
+				r.setRight(p);
+			}
+		}
+		q.update();
+	}
+
+	public void splay(Vertex p) {
+		while (!p.isRoot()) {
+			Vertex q = p.getParent();
+			if (q.isRoot()) {
+				if (q.getLeft() == p) {
+					rotateRight(p);
+				} else {
+					rotateLeft(p);
+				}
+			} else {
+				Vertex r = q.getParent();
+				if (r.getLeft() == q) {
+					if (q.getLeft() == p) {
+						rotateRight(q);
+						rotateRight(p);
+					} else {
+						rotateLeft(p);
+						rotateRight(p);
+					}
+				} else {
+					if (q.getRight() == p) {
+						rotateLeft(q);
+						rotateLeft(p);
+					} else {
+						rotateRight(p);
+						rotateLeft(p);
+					}
+				}
+			}
+		}
+		p.normalize();
+		p.update();
 	}
 
 	public void expose(Vertex v) {
-		Path p, q, r;
-		Vertex w;
-		p = new Path(new LinkedList<Vertex>());
-		do {
-			//w = findPath(v).g
-			
-			
-		} while (v != null);
-	}
-
-	public void makePath(Vertex v) {
-
-	}
-
-	public Path findPath(Vertex v) {
-		for (Path path : paths) {
-			for (Vertex vert : path.getPath()) {
-				
-			}
+		Vertex r = null;
+		Vertex p = v;
+		// while loop for working up the tree
+		while (p != null) {
+			splay(p);
+			p.setLeft(r);
+			p.update();
+			r = p;
+			p = p.getParent();
 		}
-		return null;
+		splay(v);
 	}
-
-	public Vertex findTail(Path p) {
-		return p.getPath().getLast();
-	}
-
-	public void printGraph() {
-		
-	}
-
 }
