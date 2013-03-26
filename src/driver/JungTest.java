@@ -1,43 +1,43 @@
 package driver;
 
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.SparseMultigraph;
-import edu.uci.ics.jung.graph.util.EdgeType;
+import graphBasics.Vertex;
 
 public class JungTest {
 
+	Vertex one = new Vertex("1", 3);
+	Vertex two = new Vertex("2", 2);
+	Vertex three = new Vertex("3", -2);
+	Vertex four = new Vertex("4", 5);
+	DelegateTreeWithPaths<Vertex, String> graph;
+	GraphVisualizer gv;
+
 	public JungTest() {
-		Graph<Integer, String> graph = buildGraph();
-		GraphVisualizer gv = new GraphVisualizer(graph);
+		graph = new DelegateTreeWithPaths<>();
+		gv = new GraphVisualizer(graph);
+		gv.go();
+		System.out.println(graph.getParent(three));
 		gv.go();
 	}
 
-	public Graph<Integer, String> buildGraph() {
-		// Graph<V, E> where V is the type of the vertices
-		// and E is the type of the edges
-		Graph<Integer, String> g = new SparseMultigraph<Integer, String>();
-		// Add some vertices. From above we defined these to be type Integer.
-		g.addVertex((Integer) 1);
-		g.addVertex((Integer) 2);
-		g.addVertex((Integer) 3);
-		// Add some edges. From above we defined these to be of type String
-		// Note that the default is for undirected edges.
-		g.addEdge("Edge-A", 1, 2); // Note that Java 1.5 auto-boxes primitives
-		g.addEdge("Edge-B", 2, 3);
-		// Let's see what we have. Note the nice output from the
-		// SparseMultigraph<V,E> toString() method
-		System.out.println("The graph g = " + g.toString());
-		// Note that we can use the same nodes and edges in two different
-		// graphs.
-		Graph<Integer, String> g2 = new SparseMultigraph<Integer, String>();
-		g2.addVertex((Integer) 1);
-		g2.addVertex((Integer) 2);
-		g2.addVertex((Integer) 3);
-		g2.addEdge("Edge-A", 1, 3);
-		g2.addEdge("Edge-B", 2, 3, EdgeType.DIRECTED);
-		g2.addEdge("Edge-C", 3, 2, EdgeType.DIRECTED);
-		g2.addEdge("Edge-P", 2, 3); // A parallel edge
+	public DelegateTreeWithPaths<Vertex, String> buildGraph() {
+
+		DelegateTreeWithPaths<Vertex, String> g2 = new DelegateTreeWithPaths<Vertex, String>();
+
+		g2.addVertex(one);
+
+		g2.addChild("Eone", one, two);
+		g2.addChild("Etwo", two, three);
+		g2.addChild("Ethree", one, four);
 		return g2;
 	}
+	
+	
 
+	public Vertex findRoot() {
+		return graph.getRoot();
+	}
+
+	public void makeTree(Vertex v) {
+		graph.addVertex(v);
+	}
 }

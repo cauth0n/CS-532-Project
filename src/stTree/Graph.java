@@ -1,5 +1,7 @@
 package stTree;
 
+import graphBasics.Vertex;
+
 /**
  * http://www.cs.cmu.edu/~avrim/451/lectures/lect1009-linkcut.txt
  * 
