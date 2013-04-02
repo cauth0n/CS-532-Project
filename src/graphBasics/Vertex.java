@@ -3,7 +3,6 @@ package graphBasics;
 public class Vertex {
 
 	private double cost;
-
 	private String id;
 
 	public Vertex(String id, double cost) {

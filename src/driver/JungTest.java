@@ -13,10 +13,10 @@ public class JungTest {
 
 	public JungTest() {
 		graph = new DelegateTreeWithPaths<>();
-		gv = new GraphVisualizer(graph);
-		gv.go();
-		System.out.println(graph.getParent(three));
-		gv.go();
+		// gv = new GraphVisualizer(graph);
+		// gv.go();
+		// System.out.println(graph.getParent(three));
+		// gv.go();
 	}
 
 	public DelegateTreeWithPaths<Vertex, String> buildGraph() {
@@ -30,8 +30,6 @@ public class JungTest {
 		g2.addChild("Ethree", one, four);
 		return g2;
 	}
-	
-	
 
 	public Vertex findRoot() {
 		return graph.getRoot();
