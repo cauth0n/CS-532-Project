@@ -4,6 +4,7 @@ import graphBasics.Edge;
 import graphBasics.Vertex;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -11,8 +12,8 @@ import driver.GraphVisualizer;
 import edu.uci.ics.jung.graph.Graph;
 
 public class Simulator {
-	private final int numVertices = 10;
-	private final int numEdges = 20;
+	private final int numVertices = 3;
+	private final int numEdges = 3;
 	private final int maxFlow = 100;
 
 	private GraphVisualizer gv;
@@ -54,15 +55,33 @@ public class Simulator {
 			if (!(one == two)) {
 				if (isEdge == null) {
 					dfg.add(edges.get(i), one, two);
-					i++;
+					System.out.println("Added from " + one.toString() + " to " + two.toString());
+					if (!isCycle(one, dfg.getGraph().getSuccessors(one))) {
+						i++;
+					} else {
+						System.out.println("Put in a cycle");
+						dfg.getGraph().removeEdge(edges.get(i));
+						System.out.println("Removed from " + one.toString() + " to " + two.toString());
+					}
 				}
 			}
 		}
 	}
 	
-	public void getInitialMaxFlow(){
-		//uses E-K to get the initial max flow of the graph.
-		//needs to be done, using the E-K already implemented.
+	public boolean isCycle(Vertex toVertex, Collection<Vertex> successors) {
+		for (Vertex v : successors) {
+			if (v == toVertex) {
+				return true;
+			}else{
+				return isCycle(toVertex, dfg.getGraph().getSuccessors(v));
+			}
+		}
+		return false;
+	}
+	
+	public void getInitialMaxFlow() {
+		// uses E-K to get the initial max flow of the graph.
+		// needs to be done, using the E-K already implemented.
 	}
 
 	public Vertex getRandVertex() {

@@ -8,7 +8,7 @@ import graphBasics.Vertex;
 public class DynamicFlowGraph {
 
 	private final EdgeType d = EdgeType.DIRECTED;
-	DirectedSparseGraph<Vertex, Edge> graph;
+	private DirectedSparseGraph<Vertex, Edge> graph;
 
 	public DynamicFlowGraph() {
 		graph = new DirectedSparseGraph<>();
@@ -32,6 +32,10 @@ public class DynamicFlowGraph {
 		add(e1, one, v);
 		//add(e2, v, two);
 
+	}
+	
+	public void updateChildren(Vertex v, int flowRemoved){
+		
 	}
 
 	public DirectedSparseGraph<Vertex, Edge> getGraph() {
