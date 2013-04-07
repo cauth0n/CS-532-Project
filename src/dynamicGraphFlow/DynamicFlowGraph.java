@@ -30,7 +30,7 @@ public class DynamicFlowGraph {
 		graph.removeEdge(e);
 		Vertex v = new Vertex("3", 0);
 		add(e1, one, v);
-		add(e2, v, two);
+		//add(e2, v, two);
 
 	}
 
