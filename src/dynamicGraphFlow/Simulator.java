@@ -6,9 +6,12 @@ import graphBasics.Vertex;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import driver.GraphVisualizer;
+import edu.uci.ics.jung.algorithms.flows.EdmondsKarpMaxFlow;
+import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.Graph;
 
 public class Simulator {
@@ -26,7 +29,6 @@ public class Simulator {
 		populate();
 		visualizeGraph(dfg.getGraph());
 		// System.out.println("Cutting");
-		System.out.println(dfg.getGraph().getEdgeCount());
 		// dfg.cut(dfg.getGraph().findEdge(v1, v2));
 		// visualizeGraph(dfg.getGraph());
 	}
@@ -81,9 +83,15 @@ public class Simulator {
 		return false;
 	}
 
-	public void getInitialMaxFlow() {
+	public DirectedGraph<Vertex, Edge> getInitialMaxFlow() {
 		// uses E-K to get the initial max flow of the graph.
 		// needs to be done, using the E-K already implemented.
+		org.apache.commons.collections15.Transformer<Edge, Integer> edgeCapacities;
+		Map<Edge, Integer> edgeFlowMap = getEdgeFlowMap();
+		EdmondsKarpMaxFlow<Vertex, Edge> ek = new EdmondsKarpMaxFlow<Vertex, Edge>(dfg, vertices.get(0), vertices.get(numVertices), edgeCapacities,
+				arg4, arg5);
+
+		return ek.getFlowGraph();
 	}
 
 	public Vertex getRandVertex() {
@@ -94,6 +102,14 @@ public class Simulator {
 	public int getRandomFlow() {
 		Random rand = new Random();
 		return rand.nextInt(maxFlow);
+	}
+
+	public Map<Edge, Integer> getEdgeFlowMap() {
+		Map<Edge, Integer> 
+	}
+
+	public Integer transform(Edge input) {
+
 	}
 
 }
