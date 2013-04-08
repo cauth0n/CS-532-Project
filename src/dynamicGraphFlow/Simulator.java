@@ -12,8 +12,8 @@ import driver.GraphVisualizer;
 import edu.uci.ics.jung.graph.Graph;
 
 public class Simulator {
-	private final int numVertices = 3;
-	private final int numEdges = 3;
+	private final int numVertices = 10;
+	private final int numEdges = 20;
 	private final int maxFlow = 100;
 
 	private GraphVisualizer gv;
@@ -25,7 +25,7 @@ public class Simulator {
 		dfg = new DynamicFlowGraph();
 		populate();
 		visualizeGraph(dfg.getGraph());
-		System.out.println("Cutting");
+		// System.out.println("Cutting");
 		System.out.println(dfg.getGraph().getEdgeCount());
 		// dfg.cut(dfg.getGraph().findEdge(v1, v2));
 		// visualizeGraph(dfg.getGraph());
@@ -54,31 +54,33 @@ public class Simulator {
 			Edge isEdge = dfg.getGraph().findEdge(one, two);
 			if (!(one == two)) {
 				if (isEdge == null) {
-					dfg.add(edges.get(i), one, two);
-					System.out.println("Added from " + one.toString() + " to " + two.toString());
-					if (!isCycle(one, dfg.getGraph().getSuccessors(one))) {
-						i++;
-					} else {
-						System.out.println("Put in a cycle");
-						dfg.getGraph().removeEdge(edges.get(i));
-						System.out.println("Removed from " + one.toString() + " to " + two.toString());
+					if ((dfg.getGraph().findEdge(two, one) == null)) {
+						dfg.add(edges.get(i), one, two);
+						System.out.println("Added from " + one.toString() + " to " + two.toString());
+						if (isCycle(one, dfg.getGraph().getSuccessors(one))) {
+							System.out.println("Put in a cycle");
+							dfg.getGraph().removeEdge(edges.get(i));
+							System.out.println("Removed from " + one.toString() + " to " + two.toString());
+						} else {
+							i++;
+						}
 					}
 				}
 			}
 		}
 	}
-	
+
 	public boolean isCycle(Vertex toVertex, Collection<Vertex> successors) {
 		for (Vertex v : successors) {
 			if (v == toVertex) {
 				return true;
-			}else{
+			} else {
 				return isCycle(toVertex, dfg.getGraph().getSuccessors(v));
 			}
 		}
 		return false;
 	}
-	
+
 	public void getInitialMaxFlow() {
 		// uses E-K to get the initial max flow of the graph.
 		// needs to be done, using the E-K already implemented.
