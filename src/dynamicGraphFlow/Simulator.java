@@ -5,28 +5,33 @@ import graphBasics.Vertex;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.apache.commons.collections15.Factory;
+import org.apache.commons.collections15.Transformer;
+import org.apache.commons.collections15.map.HashedMap;
+
 import driver.GraphVisualizer;
 import edu.uci.ics.jung.algorithms.flows.EdmondsKarpMaxFlow;
-import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.Graph;
 
-public class Simulator {
-	private final int numVertices = 10;
-	private final int numEdges = 20;
-	private final int maxFlow = 100;
+public class Simulator extends Operations {
+
+	protected final int numVertices = 10;
+	private final int numEdges = 5;
 
 	private GraphVisualizer gv;
 	private DynamicFlowGraph dfg;
-	private List<Vertex> vertices;
+	protected List<Vertex> vertices;
 	private List<Edge> edges;
 
 	public Simulator() {
 		dfg = new DynamicFlowGraph();
 		populate();
+		getInitialMaxFlow();
 		visualizeGraph(dfg.getGraph());
 		// System.out.println("Cutting");
 		// dfg.cut(dfg.getGraph().findEdge(v1, v2));
@@ -37,6 +42,11 @@ public class Simulator {
 		gv = new GraphVisualizer(graph);
 		gv.visualize();
 
+	}
+
+	public Vertex getRandVertex() {
+		Random rand = new Random();
+		return vertices.get(rand.nextInt(numVertices));
 	}
 
 	public void populate() {
@@ -83,33 +93,34 @@ public class Simulator {
 		return false;
 	}
 
-	public DirectedGraph<Vertex, Edge> getInitialMaxFlow() {
+	public void getInitialMaxFlow() {
 		// uses E-K to get the initial max flow of the graph.
 		// needs to be done, using the E-K already implemented.
-		org.apache.commons.collections15.Transformer<Edge, Integer> edgeCapacities;
-		Map<Edge, Integer> edgeFlowMap = getEdgeFlowMap();
-		EdmondsKarpMaxFlow<Vertex, Edge> ek = new EdmondsKarpMaxFlow<Vertex, Edge>(dfg, vertices.get(0), vertices.get(numVertices), edgeCapacities,
-				arg4, arg5);
+		Transformer<Edge, Number> edgeCapacities = new EdgeTransformer();
+		Map<Edge, Number> edgeFlowMap = new HashMap<>();// getEdgeFlowMap();
+		Factory<Edge> edgeFactory = new EdgeFactory();
 
-		return ek.getFlowGraph();
+		EdmondsKarpMaxFlow<Vertex, Edge> ek = new EdmondsKarpMaxFlow<Vertex, Edge>(dfg.getGraph(), vertices.get(0), vertices.get(numVertices - 1),
+				edgeCapacities, edgeFlowMap, edgeFactory);
+
+		System.out.println("Computing Max Flow");
+		ek.evaluate();
+		System.out.println("Computed Max Flow");
+		revertFlowsFromMap(edgeFlowMap);
+		dfg.setGraph(ek.getFlowGraph());
 	}
 
-	public Vertex getRandVertex() {
-		Random rand = new Random();
-		return vertices.get(rand.nextInt(numVertices));
+	public Map<Edge, Number> getEdgeFlowMap() {
+		Map<Edge, Number> edgeFlowMap = new HashedMap<>();
+		for (Edge e : edges) {
+			edgeFlowMap.put(e, e.getCurrentFlow());
+		}
+		return edgeFlowMap;
 	}
 
-	public int getRandomFlow() {
-		Random rand = new Random();
-		return rand.nextInt(maxFlow);
+	public void revertFlowsFromMap(Map<Edge, Number> edgeFlowMap) {
+		for (Edge e : edgeFlowMap.keySet()) {
+			e.setCurrentFlow(edgeFlowMap.get(e).intValue());
+		}
 	}
-
-	public Map<Edge, Integer> getEdgeFlowMap() {
-		Map<Edge, Integer> 
-	}
-
-	public Integer transform(Edge input) {
-
-	}
-
 }
