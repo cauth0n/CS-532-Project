@@ -15,24 +15,24 @@ import graphBasics.Vertex;
 
 public class GraphVisualizer {
 	private Graph<Vertex, Edge> graph;
-
+	private JFrame frame;
+	private BasicVisualizationServer<Vertex, Edge> vv;
+	private Layout<Vertex, Edge> layout;
 
 	public GraphVisualizer(Graph<Vertex, Edge> graph) {
 		this.graph = graph;
-	}
+		frame = new JFrame("Simple graph");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		layout = new CircleLayout<>(graph);
+		layout.setSize(new Dimension(600, 600));
+		vv = new BasicVisualizationServer<>(layout);
+		vv.setPreferredSize(new Dimension(600, 600));
 
-	public void visualize() {
-		Layout<Vertex, Edge> layout = new CircleLayout<>(graph);
-		layout.setSize(new Dimension(300, 300));
-		BasicVisualizationServer<Vertex, Edge> vv = new BasicVisualizationServer<>(layout);
-		vv.setPreferredSize(new Dimension(350, 350));
-		
 		vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<Vertex>());
-		
+
 		vv.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
 		vv.getRenderContext().setEdgeLabelTransformer(new ToStringLabeller<Edge>());
-		JFrame frame = new JFrame("Simple graph");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 		frame.getContentPane().add(vv);
 		frame.pack();
 		frame.setVisible(true);

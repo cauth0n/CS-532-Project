@@ -1,7 +1,6 @@
 package dynamicGraphFlow;
 
 import edu.uci.ics.jung.graph.DirectedGraph;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import graphBasics.Edge;
 import graphBasics.Vertex;
@@ -11,8 +10,12 @@ public class DynamicFlowGraph {
 	private final EdgeType d = EdgeType.DIRECTED;
 	private DirectedGraph<Vertex, Edge> graph;
 
-	public DynamicFlowGraph() {
-		graph = new DirectedSparseGraph<>();
+	public DynamicFlowGraph(DirectedGraph<Vertex, Edge> graph) {
+		this.graph = graph;
+	}
+
+	public DynamicFlowGraph(DynamicFlowGraph another) {
+		this(another.getGraph());
 	}
 
 	public void add(Vertex v) {
@@ -32,7 +35,6 @@ public class DynamicFlowGraph {
 		Vertex v = new Vertex("3", 0);
 		add(e1, one, v);
 		// add(e2, v, two);
-
 	}
 
 	public void updateChildren(Vertex v, int flowRemoved) {
@@ -42,10 +44,5 @@ public class DynamicFlowGraph {
 	public DirectedGraph<Vertex, Edge> getGraph() {
 		return graph;
 	}
-
-	public void setGraph(DirectedGraph<Vertex, Edge> graph) {
-		this.graph = graph;
-	}
-	
 
 }
