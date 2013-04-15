@@ -5,7 +5,7 @@ import edu.uci.ics.jung.graph.util.EdgeType;
 import graphBasics.Edge;
 import graphBasics.Vertex;
 
-public class DynamicFlowGraph {
+public class DynamicFlowGraph extends Operations {
 
 	private final EdgeType d = EdgeType.DIRECTED;
 	private DirectedGraph<Vertex, Edge> graph;
@@ -29,12 +29,37 @@ public class DynamicFlowGraph {
 	public void cut(Edge e) {
 		Vertex one = graph.getEndpoints(e).getFirst();
 		Vertex two = graph.getEndpoints(e).getSecond();
-		Edge e1 = new Edge(e.getCapacity(), e.getCurrentFlow());
-		Edge e2 = new Edge(e.getCapacity(), e.getCurrentFlow());
+		Edge e1 = new Edge(0, 0);
 		graph.removeEdge(e);
-		Vertex v = new Vertex("3", 0);
+		Vertex v = new Vertex("new", 0);
 		add(e1, one, v);
-		// add(e2, v, two);
+		cascadeFlowToChildren(two);
+		cascadeFlowFromParent(one, e.getCurrentFlow());
+	}
+
+	public void cascadeFlowFromParent(Vertex v, int flow) {
+		int remainingFlow = flow;
+		if (v == null) {
+			return;
+		}
+		for (Edge e : graph.getOutEdges(v)) {
+			while (remainingFlow >= 0 && e.getCurrentFlow() >= 0) {
+				e.decrementFlow();
+				remainingFlow--;
+			}
+			//This goes in a DFS manner. It does not matter if BFS or DFS.
+			cascadeFlowFromParent(graph.getEndpoints(e).getSecond(), flow);	//get the second vertex, updating the entire flow.
+		}
+	}
+
+	public void cascadeFlowToChildren(Vertex v) {
+		if (v == null || graph.getOutEdges(v) == null) {
+			return;
+		}
+		for (Edge e : graph.getOutEdges(v)) {
+			e.setCurrentFlow(0);
+			cascadeFlowToChildren(graph.getDest(e));
+		}
 	}
 
 	public void updateChildren(Vertex v, int flowRemoved) {

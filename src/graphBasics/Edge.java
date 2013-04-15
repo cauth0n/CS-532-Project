@@ -25,9 +25,13 @@ public class Edge {
 	public void setCurrentFlow(int currentFlow) {
 		this.currentFlow = currentFlow;
 	}
-	
-	public String toString(){
+
+	public String toString() {
 		return "" + currentFlow + "/" + capacity;
+	}
+
+	public void decrementFlow() {
+		currentFlow--;
 	}
 
 }

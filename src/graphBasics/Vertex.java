@@ -2,24 +2,24 @@ package graphBasics;
 
 public class Vertex {
 
-	private double cost;
+	private int outFlow;
 	private String id;
 
-	public Vertex(String id, double cost) {
+	public Vertex(String id, int outFlow) {
 		this.id = id;
-		this.cost = cost;
+		this.outFlow = outFlow;
 	}
 
 	public String toString() {
-		return id;
+		return id + " ___ " + outFlow;
 	}
 
-	public double getCost() {
-		return cost;
+	public int getCost() {
+		return outFlow;
 	}
 
-	public void setCost(double cost) {
-		this.cost = cost;
+	public void setFlow(int outFlow) {
+		this.outFlow = outFlow;
 	}
 
 }
