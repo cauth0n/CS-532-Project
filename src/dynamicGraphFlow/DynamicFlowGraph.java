@@ -33,37 +33,41 @@ public class DynamicFlowGraph extends Operations {
 		graph.removeEdge(e);
 		Vertex v = new Vertex("new", 0);
 		add(e1, one, v);
-		cascadeFlowToChildren(two);
-		cascadeFlowFromParent(one, e.getCurrentFlow());
-	}
-
-	public void cascadeFlowFromParent(Vertex v, int flow) {
-		int remainingFlow = flow;
-		if (v == null) {
-			return;
-		}
-		for (Edge e : graph.getOutEdges(v)) {
-			while (remainingFlow >= 0 && e.getCurrentFlow() >= 0) {
-				e.decrementFlow();
-				remainingFlow--;
+		cascadeFlowToChildren(two, e.getCurrentFlow());
+		boolean isWeakEdge = true;
+		for (Edge ePrime : graph.getOutEdges(one)) {
+			if (ePrime.getCurrentFlow() < e.getCurrentFlow()) {
+				isWeakEdge = false; // another edge has less flow.
 			}
-			//This goes in a DFS manner. It does not matter if BFS or DFS.
-			cascadeFlowFromParent(graph.getEndpoints(e).getSecond(), flow);	//get the second vertex, updating the entire flow.
+		}
+		if (isWeakEdge) {
+			System.out.println("Found a weak edge. ");
+			// run E-K on graph again
 		}
 	}
 
-	public void cascadeFlowToChildren(Vertex v) {
+	public void cascadeFlowToChildren(Vertex v, int flowToCascade) {
 		if (v == null || graph.getOutEdges(v) == null) {
 			return;
 		}
+		int flowRemaining = flowToCascade;
 		for (Edge e : graph.getOutEdges(v)) {
-			e.setCurrentFlow(0);
-			cascadeFlowToChildren(graph.getDest(e));
+			while (flowRemaining > 0) {
+				if (e.getCurrentFlow() <= flowRemaining) {
+					flowRemaining -= e.getCurrentFlow();
+					e.setCapacity(0);
+					e.setCurrentFlow(0);
+				} else {
+					e.setCapacity(e.getCurrentFlow() - flowRemaining);
+					e.setCurrentFlow(e.getCurrentFlow() - flowRemaining);
+					flowRemaining = 0;
+				}
+			}
+
 		}
-	}
-
-	public void updateChildren(Vertex v, int flowRemoved) {
-
+		for (Edge e : graph.getOutEdges(v)) {
+			cascadeFlowToChildren(graph.getDest(e), flowToCascade);
+		}
 	}
 
 	public DirectedGraph<Vertex, Edge> getGraph() {
