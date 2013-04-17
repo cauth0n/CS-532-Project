@@ -33,7 +33,7 @@ public class DynamicFlowGraph extends Operations {
 		graph.removeEdge(e);
 		Vertex v = new Vertex("new", 0);
 		add(e1, one, v);
-		cascadeFlowToChildren(two, e.getCurrentFlow());
+
 		boolean isWeakEdge = true;
 		for (Edge ePrime : graph.getOutEdges(one)) {
 			if (ePrime.getCurrentFlow() < e.getCurrentFlow()) {
@@ -43,6 +43,8 @@ public class DynamicFlowGraph extends Operations {
 		if (isWeakEdge) {
 			System.out.println("Found a weak edge. ");
 			// run E-K on graph again
+		} else {
+			cascadeFlowToChildren(two, e.getCurrentFlow());
 		}
 	}
 
@@ -52,21 +54,17 @@ public class DynamicFlowGraph extends Operations {
 		}
 		int flowRemaining = flowToCascade;
 		for (Edge e : graph.getOutEdges(v)) {
-			while (flowRemaining > 0) {
-				if (e.getCurrentFlow() <= flowRemaining) {
-					flowRemaining -= e.getCurrentFlow();
-					e.setCapacity(0);
-					e.setCurrentFlow(0);
-				} else {
-					e.setCapacity(e.getCurrentFlow() - flowRemaining);
-					e.setCurrentFlow(e.getCurrentFlow() - flowRemaining);
-					flowRemaining = 0;
-				}
-			}
+			if (e.getCurrentFlow() <= flowRemaining) {
+				flowRemaining -= e.getCurrentFlow();
+				e.setCapacity(0);
+				e.setCurrentFlow(0);
+			} else {
+				e.setCapacity(e.getCurrentFlow() - flowRemaining);
+				e.setCurrentFlow(e.getCurrentFlow() - flowRemaining);
+				flowRemaining = 0;
 
-		}
-		for (Edge e : graph.getOutEdges(v)) {
-			cascadeFlowToChildren(graph.getDest(e), flowToCascade);
+			}
+			cascadeFlowToChildren(graph.getDest(e), e.getCurrentFlow());
 		}
 	}
 

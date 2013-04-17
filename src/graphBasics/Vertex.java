@@ -22,4 +22,9 @@ public class Vertex {
 		this.outFlow = outFlow;
 	}
 
+	public int getOutFlow() {
+		return outFlow;
+	}
+	
+
 }

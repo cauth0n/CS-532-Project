@@ -14,16 +14,16 @@ import graphBasics.Edge;
 import graphBasics.Vertex;
 
 public class GraphVisualizer {
-	private Graph<Vertex, Edge> graph;
+
 	private JFrame frame;
 	private BasicVisualizationServer<Vertex, Edge> vv;
 	private Layout<Vertex, Edge> layout;
 
 	public GraphVisualizer(Graph<Vertex, Edge> graph) {
-		this.graph = graph;
 		frame = new JFrame("Simple graph");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		layout = new CircleLayout<>(graph);
+
 		layout.setSize(new Dimension(600, 600));
 		vv = new BasicVisualizationServer<>(layout);
 		vv.setPreferredSize(new Dimension(600, 600));
