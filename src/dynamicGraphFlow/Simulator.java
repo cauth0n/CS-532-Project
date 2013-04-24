@@ -19,11 +19,14 @@ public class Simulator extends Operations {
 	private DirectedGraph<Vertex, Edge> graph;
 
 	public Simulator() {
-		graph = manualPopulate();// populate();
+		graph = populate();
 		dfg = new DynamicFlowGraph(graph);
 
-		visualizeGraph(dfg.getGraph());
+		// visualizeGraph(dfg.getGraph());
+		long initBeforeTime = System.currentTimeMillis();
 		DynamicFlowGraph initialFlow = new DynamicFlowGraph(getEKMaxFlow(graph));
+		long initAfterTime = System.currentTimeMillis();
+		long initTime = initAfterTime - initBeforeTime;
 		// System.out.println("Cutting");
 		// dfg.cut(dfg.getGraph().findEdge(v1, v2));
 		// visualizeGraph(dfg.getGraph());
@@ -35,7 +38,7 @@ public class Simulator extends Operations {
 		Edge edge = edges.get(0);
 		dfg.cut(edge);
 
-		visualizeGraph(dfg.getGraph());
+		// visualizeGraph(dfg.getGraph());
 		fillVertexFlows();
 
 		/*
@@ -46,6 +49,26 @@ public class Simulator extends Operations {
 		/*
 		 * 
 		 */
+
+		long beforeTimeCut = System.currentTimeMillis();
+		for (int i = 0; i < numCuts; i++) {
+			dfg.cut(getRandEdge());
+			System.out.println("Cut " + i);
+		}
+		long afterTimeCut = System.currentTimeMillis();
+		long cutTime = afterTimeCut - beforeTimeCut + initTime;
+
+		long beforeTimeEK = System.currentTimeMillis();
+		for (int i = 0; i < numCuts; i++) {
+			dfg.getGraph().removeEdge(getRandEdge());
+			getEKMaxFlow(dfg.getGraph());
+			System.out.println("Removed and updated " + i);
+		}
+		long afterTimeEK = System.currentTimeMillis();
+		long ekTime = afterTimeEK - beforeTimeEK + initTime;
+
+		System.out.println("Cut-Cascade: " + cutTime);
+		System.out.println("EK: " + ekTime);
 	}
 
 	public void fillVertexFlows() {
@@ -152,13 +175,14 @@ public class Simulator extends Operations {
 					if ((graph.findEdge(two, one) == null)) {
 						graph.addEdge(edges.get(i), one, two, d);
 						System.out.println("Added from " + one.toString() + " to " + two.toString());
-						if (isCycle(one, graph.getSuccessors(one), graph)) {
-							System.out.println("Put in a cycle");
-							graph.removeEdge(edges.get(i));
-							System.out.println("Removed from " + one.toString() + " to " + two.toString());
-						} else {
-							i++;
-						}
+						// if (isCycle(one, graph.getSuccessors(one), graph)) {
+						// System.out.println("Put in a cycle");
+						// graph.removeEdge(edges.get(i));
+						// System.out.println("Removed from " + one.toString() +
+						// " to " + two.toString());
+						// } else {
+						i++;
+						// }
 					}
 				}
 			}

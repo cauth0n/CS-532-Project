@@ -18,11 +18,12 @@ import graphBasics.Vertex;
 public abstract class Operations {
 
 	protected final EdgeType d = EdgeType.DIRECTED;
-	protected final int numVertices = 5;
+	protected final int numVertices = 512;
 	protected final int numEdges = (numVertices * (numVertices - 1)) / 2;
 	protected List<Vertex> vertices;
 	protected List<Edge> edges;
 	protected final int maxFlow = 100;
+	protected final int numCuts = 10;
 
 	public int getRandomFlow() {
 		Random rand = new Random();
